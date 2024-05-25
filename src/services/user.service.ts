@@ -2,6 +2,10 @@ import { Request, Response } from "express"
 import { AppDataSource } from "../data-source"
 import { User } from "../models/user"
 import { QueryFailedError } from "typeorm"
+import { hashPassword } from "../utils/handlerPasswords"
+import { plainToClass, plainToInstance } from 'class-transformer';
+import { UserDto } from "../dto/userDto"
+
 const userRepository = AppDataSource.getRepository(User)
 
 interface RequestUser extends Request {
@@ -11,6 +15,7 @@ interface RequestUser extends Request {
 export const createUser = async (req: RequestUser, res: Response) => {
   const newUser = req.body
   try {
+    newUser.password = hashPassword(newUser.password)
     await userRepository.insert(newUser)
     res.status(201).send('User Created Successfully')
   } catch (error) {
@@ -26,7 +31,8 @@ export const createUser = async (req: RequestUser, res: Response) => {
 export const getUsers = async (req: RequestUser, res: Response) => {
   try {
     const users = await userRepository.find()
-    res.status(200).send(users)
+    const usersDtos = plainToInstance(UserDto, users)
+    res.status(200).send(usersDtos)
   } catch (error) {
     res.status(500).send({ message: 'Internal Server Error', error })
   }

@@ -18,8 +18,9 @@ export const login = async (req: Request, res: Response) => {
         message : 'bad request, email doesnt exists'
       })
     }
-    //TO DO: check password with bcrypt
-    const token = await generateToken(email)
+    // TODO: check password with bcrypt
+    
+    const token = await generateToken(user)
     return res.json({user, token})
   } catch (error) {
 
