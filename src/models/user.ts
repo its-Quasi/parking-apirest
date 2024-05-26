@@ -1,11 +1,13 @@
 import {
   Column,
   Entity,
+  OneToMany,
   PrimaryColumn
 } from 'typeorm'
 import { Role } from '../utils/role'
+import { Parking } from './parking'
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryColumn()
   email: string
@@ -19,7 +21,10 @@ export class User {
   @Column({
     type: "enum",
     enum: Role,
-    default: Role.USER,
+    default: Role.PARTNER,
   })
   role: Role
+
+  @OneToMany(() => Parking, parking => parking.partner)
+  parkings: Parking[]
 }
