@@ -3,7 +3,7 @@ import { AppDataSource } from "../data-source"
 import { User } from "../models/user"
 import { QueryFailedError } from "typeorm"
 import { hashPassword } from "../utils/handlerPasswords"
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { UserDto } from "../dto/userDto"
 
 const userRepository = AppDataSource.getRepository(User)
