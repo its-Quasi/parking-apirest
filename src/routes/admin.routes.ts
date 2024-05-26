@@ -1,6 +1,7 @@
 import { Router } from 'express'
 const router = Router()
 import { createUser, getUsers } from '../services/user.service'
+import { createParking, deleteParking, getParkingById, getParkings, updateParking } from '../services/admin.service'
 
 // routes about users operations
 router.route('/users')
@@ -15,14 +16,12 @@ router.route('/users/:id')
 
 // routes about parking operations
 router.route('/parkings')
-  .post()
-  .get()
-  .put()
-  .delete()
+  .post(createParking)
+  .get(getParkings)
 
   router.route('/parkings/:id')
-  .get()
-  .put()
-  .delete()
+  .get(getParkingById)
+  .put(updateParking)
+  .delete(deleteParking)
 
 export default router

@@ -5,11 +5,12 @@ import authRoutes from './routes/auth.routes'
 import adminRoutes from './routes/admin.routes'
 
 import { verifyToken } from './middlewares/verifyToken'
+import { verifyRole } from './middlewares/verifyRole'
 
 const app = express()
 app.use(express.json())
 app.use('/auth', authRoutes)
-app.use('/users', verifyToken, userRoutes)
-app.use('/admin', adminRoutes)
+app.use('/partners', verifyToken, userRoutes)
+app.use('/admin', [verifyToken, verifyRole], adminRoutes)
 
 export default app

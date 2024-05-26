@@ -2,6 +2,7 @@
 import { DataSource } from 'typeorm'
 import { User } from './models/user'
 import { Parking } from './models/parking'
+import { ParkingLog } from './models/parkingLog'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,6 +12,6 @@ export const AppDataSource = new DataSource({
   password: 'test',
   database: 'parking',
   synchronize: true,
-  entities: [User, Parking],
+  entities: [User, Parking, ParkingLog],
   // logging: true,
 })
