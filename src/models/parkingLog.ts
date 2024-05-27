@@ -16,6 +16,9 @@ export class ParkingLog {
   @Column({ nullable: true })
   exitTime: Date
 
+  @Column({ default: 0 })
+  profit: number
+
   @ManyToOne(() => Parking, parking => parking.parkingLogs)
   parking: Parking
 }

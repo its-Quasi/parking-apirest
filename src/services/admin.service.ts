@@ -4,6 +4,11 @@ import { User } from "../models/user"
 import { Parking } from "../models/parking"
 import { plainToInstance } from "class-transformer"
 import { ParkingDto } from "../dto/parkingDto"
+import { QueryFailedError } from "typeorm"
+import { hashPassword } from "../utils/handlerPasswords"
+import { UserDto } from "../dto/userDto"
+
+
 
 const parkingRepository = AppDataSource.getRepository(Parking)
 const userRepository = AppDataSource.getRepository(User)
@@ -14,6 +19,7 @@ const userRepository = AppDataSource.getRepository(User)
 export const createParking = async (req: Request, res: Response) => {
   try {
     const parking: Parking = req.body
+    parking.avaliableSpaces = parking.totalSpaces
     const partnerEmail = parking.partner.email
     const partner = await userRepository.findOneBy({ email: partnerEmail })
     if (!partner) {
@@ -30,6 +36,7 @@ export const createParking = async (req: Request, res: Response) => {
 export const getParkings = async (req: Request, res: Response) => {
   try {
     const parkings = await parkingRepository.find({
+      where: { active: true },
       relations: ['partner']
     })
     const parkingDtos = plainToInstance(ParkingDto, parkings)
@@ -44,8 +51,7 @@ export const getParkingById = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id)
     const parking = await parkingRepository.findOne({
       where: { id },
-      relations: ['partner'],
-      // select : {partner : {}}
+      relations: ['partner']
     })
     if (!parking) res.status(404).send({ message: `Parking with ID: ${id} not found` })
     else {
@@ -80,13 +86,50 @@ export const updateParking = async (req: Request, res: Response) => {
 
 export const deleteParking = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id)
-    await parkingRepository.delete({ id })
-    return res.status(204).send()
+    const id = parseInt(req.params.id);
+
+    const parking = await parkingRepository.findOneBy({ id });
+    if (!parking) {
+      return res.status(404).json({ message: 'Parking not found' });
+    }
+    // update 'active' field to false
+    parking.active = false;
+    await parkingRepository.save(parking);
+    return res.status(204).send();
   } catch (error) {
-    res.status(500).send({ message: 'Internal Server Error', error })
+    res.status(500).send({ message: 'Internal Server Error', error });
   }
 }
 
 
 /** OPERATIONS USER ENTITY **/
+
+interface RequestUser extends Request {
+  body: User
+}
+
+export const createPartner = async (req: RequestUser, res: Response) => {
+  const newUser = req.body
+  try {
+    newUser.password = hashPassword(newUser.password)
+    await userRepository.insert(newUser)
+    res.status(201).send('User Created Successfully')
+  } catch (error) {
+    const queryError = error as any
+    if (error instanceof QueryFailedError && queryError.code === '23505') {
+      res.status(409).send({ message: 'User Alredy Exists', error: queryError.detail })
+    } else {
+      res.status(500).send({ message: 'Internal Server Error', error })
+    }
+  }
+}
+
+export const getPartners = async (req: RequestUser, res: Response) => {
+  try {
+    const users = await userRepository.find({ relations: ['parkings'] })
+    const usersDtos = plainToInstance(UserDto, users)
+    res.status(200).send(usersDtos)
+  } catch (error) {
+    res.status(500).send({ message: 'Internal Server Error', error })
+  }
+}

@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import { login } from '../services/auth.service'
+import { login, logout } from '../services/auth.service'
 const router = Router()
 
 router.post('/login', login)
+router.post('/logout', logout)
 
 export default router

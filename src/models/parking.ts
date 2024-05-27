@@ -8,13 +8,24 @@ export class Parking {
   id: number
 
   @Column()
+  name: string
+
+  @Column()
   location: string
 
   @Column()
-  avaliableSpaces: number
+  priceByHour: number
 
   @Column()
   totalSpaces: number
+
+  @Column({ default: 0 })
+  avaliableSpaces: number
+
+  @Column({
+    default: true
+  })
+  active: boolean
 
   @ManyToOne(() => User, partner => partner.parkings)
   partner: User
