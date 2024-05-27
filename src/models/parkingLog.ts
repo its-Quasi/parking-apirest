@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Parking } from "./parking";
 
 @Entity({ name: 'parking_logs' })
 export class ParkingLog {
@@ -14,4 +15,7 @@ export class ParkingLog {
 
   @Column({ nullable: true })
   exitTime: Date
+
+  @ManyToOne(() => Parking, parking => parking.parkingLogs)
+  parking: Parking
 }

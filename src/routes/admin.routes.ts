@@ -2,6 +2,7 @@ import { Router } from 'express'
 const router = Router()
 import { createUser, getUsers } from '../services/user.service'
 import { createParking, deleteParking, getParkingById, getParkings, updateParking } from '../services/admin.service'
+import { verifyRole } from '../middlewares/verifyRole'
 
 // routes about users operations
 router.route('/users')

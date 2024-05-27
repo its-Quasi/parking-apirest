@@ -10,7 +10,7 @@ import { verifyRole } from './middlewares/verifyRole'
 const app = express()
 app.use(express.json())
 app.use('/auth', authRoutes)
-app.use('/partners', verifyToken, userRoutes)
-app.use('/admin', [verifyToken, verifyRole], adminRoutes)
+app.use('/partners', /*verifyToken,*/ userRoutes)
+app.use('/admin',/* [verifyToken, verifyRole], */ adminRoutes)
 
 export default app

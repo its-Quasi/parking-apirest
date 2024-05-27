@@ -30,7 +30,7 @@ export const createUser = async (req: RequestUser, res: Response) => {
 
 export const getUsers = async (req: RequestUser, res: Response) => {
   try {
-    const users = await userRepository.find()
+    const users = await userRepository.find({ relations: ['parkings'] })
     const usersDtos = plainToInstance(UserDto, users)
     res.status(200).send(usersDtos)
   } catch (error) {
