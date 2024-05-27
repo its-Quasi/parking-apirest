@@ -7,7 +7,7 @@ export class Parking {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column() 
   name: string
 
   @Column()
